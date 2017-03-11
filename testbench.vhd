@@ -1,0 +1,127 @@
+
+--------------------------------------------------------------------------------
+-- Company: 
+-- Engineer:
+--
+-- Create Date:   18:47:30 04/17/2009
+-- Design Name:   lux
+-- Module Name:   C:/Xilinx92i/lux/testbench.vhd
+-- Project Name:  lux
+-- Target Device:  
+-- Tool versions:  
+-- Description:   
+-- 
+-- VHDL Test Bench Created by ISE for module: lux
+--
+-- Dependencies:
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+--
+-- Notes: 
+-- This testbench has been automatically generated using types std_logic and
+-- std_logic_vector for the ports of the unit under test.  Xilinx recommends 
+-- that these types always be used for the top-level I/O of a design in order 
+-- to guarantee that the testbench will bind correctly to the post-implementation 
+-- simulation model.
+--------------------------------------------------------------------------------
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_unsigned.all;
+USE ieee.numeric_std.ALL;
+
+ENTITY testbench_vhd IS
+END testbench_vhd;
+
+ARCHITECTURE behavior OF testbench_vhd IS 
+
+	-- Component Declaration for the Unit Under Test (UUT)
+	COMPONENT lux
+	PORT(
+		clk : IN std_logic;
+		rst : IN std_logic;
+		start : IN std_logic;
+		start_rst : in  STD_LOGIC;
+		Mt : IN std_logic_vector(31 downto 0);          
+		done : OUT std_logic;
+		Cout : OUT std_logic_vector(31 downto 0)
+		);
+	END COMPONENT;
+
+	--Inputs
+	SIGNAL clk :  std_logic := '0';
+	SIGNAL rst :  std_logic := '1';
+	SIGNAL start :  std_logic := '0';
+	SIGNAL start_rst :  std_logic := '0';
+	SIGNAL Mt :  std_logic_vector(31 downto 0):=x"00000000"; 
+
+	--Outputs
+	SIGNAL done :  std_logic;
+	SIGNAL Cout :  std_logic_vector(31 downto 0);
+
+BEGIN
+
+	-- Instantiate the Unit Under Test (UUT)
+	uut: lux PORT MAP(
+		clk => clk,
+		rst => rst,
+		start => start,
+		start_rst => start_rst,
+		done => done,
+		Mt => Mt,
+		Cout => Cout
+	);
+
+-- signal generation
+  clk <= not clk after 50 ns;
+  rst <= '0' after 100 ns;
+
+
+	tb : PROCESS
+	BEGIN
+      Mt <= x"80000000";
+      
+		-- Wait 100 ns for global reset to finish
+		wait for 200 ns;
+
+      Mt <= x"80000000";
+      start_rst <= '1'; -- init core C and buffer B to zero (first start)
+		start <= '1';
+		wait for 100 ns;
+		start_rst <= '0';
+		
+		wait until done='1';
+		
+		--message 0 0 0 0
+		Mt <= x"00000000";
+		start <= '1';
+		wait for 100 ns;
+		start <= '0';
+	   wait until done='1';
+
+		--message 0 0 0 0
+		Mt <= x"00000000";
+		start <= '1';
+		wait for 100 ns;
+		start <= '0';
+	   wait until done='1';
+	   
+	   --message 0 0 0 0
+		Mt <= x"00000000";
+		start <= '1';
+		wait for 100 ns;
+		start <= '0';
+	   wait until done='1';
+	   
+	   --message 0 0 0 0
+		Mt <= x"00000000";
+		start <= '1';
+		wait for 100 ns;
+		start <= '0';
+	   wait until done='1';
+	   	   
+		wait; -- will wait forever
+	END PROCESS;
+
+END;
